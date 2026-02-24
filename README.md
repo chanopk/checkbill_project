@@ -1,73 +1,24 @@
-# React + TypeScript + Vite
+# CheckBill 💸
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Live Demo:** [https://chanopk.github.io/checkbill_project/](https://chanopk.github.io/checkbill_project/)
 
-Currently, two official plugins are available:
+## 🎯 จุดประสงค์ (Purpose)
+CheckBill เป็น Web Application ที่สร้างขึ้นมาเพื่อช่วยแก้ปัญหาความยุ่งยากในการคิดเงินและหารค่าอาหารในกลุ่มเพื่อน โดยมีฟีเจอร์หลักดังนี้:
+- **เพิ่มรายชื่อเพื่อน (Party Members):** กำหนดคนที่ร่วมโต๊ะอาหาร
+- **เพิ่มเมนูอาหาร (Food Items):** ระบุชื่อเมนูและราคา
+- **เลือกคนหารตามเมนู (Split by Item):** สามารถเลือกได้ว่าเมนูไหนใครเป็นคนรับประทานบ้าง (ไม่ต้องหารเท่ากันทุกเมนู)
+- **คำนวณ Service Charge & VAT:** รองรับการตั้งค่าเปอร์เซ็นต์ Service Charge และภาษีมูลค่าเพิ่ม (VAT) ที่ร้านอาหารกำหนด
+- **สรุปยอดสุทธิ (Bill Summary):** แสดงสรุปยอดรวมที่แต่ละคนต้องจ่ายอย่างแม่นยำและยุติธรรม
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+โปรเจ็กต์นี้พัฒนาด้วย **React**, **TypeScript**, และ **Vite** พร้อมการออกแบบ UI ที่สะอาดตาและใช้งานง่าย (Responsive Design)
 
-## React Compiler
+## 🚀 สิ่งที่จะทำในอนาคต (Future Enhancements)
+เพื่อพัฒนาให้แอปพลิเคชัน CheckBill มีความสมบูรณ์และตอบโจทย์ผู้ใช้งานมากยิ่งขึ้น นี่คือแผนในการอัปเดตฟีเจอร์ในอนาคต:
+- [ ] **แชร์สรุปบิลเป็นรูปภาพ (Export to Image):** บันทึกสรุปยอดการจ่ายเงินของแต่ละคนเป็นรูปภาพ เพื่อให้สามารถส่งรูปในแชทกลุ่มเพื่อนได้ทันที
+- [ ] **สร้าง PromptPay QR Code (Payment Integration):** สร้าง QR Code พร้อมเพย์ตามยอดเงินรวมของแต่ละคนเพื่อให้สแกนจ่ายเงินได้ง่ายขึ้น
+- [ ] **สแกนใบเสร็จอัตโนมัติ (Receipt OCR):** ใช้เทคโนโลยี AI ในการสแกนรูปถ่ายใบเสร็จและดึงรายการอาหารพร้อมราคามาใส่ในแอปโดยอัตโนมัติ
+- [ ] **บันทึกประวัติการกิน (History & Records):** บันทึกประวัติบิลย้อนหลังว่าเคยไปร้านไหนมาบ้าง และใครจ่ายหรือยังไม่จ่าย
+- [ ] **รองรับข้อยกเว้น หรือ ส่วนลด (Discount Management):** เพิ่มฟังก์ชันการคำนวณส่วนลดท้ายบิล ส่วนลดของสมาชิก หรือส่วนลดเฉพาะบางเมนู
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+![Made with React & Vite](https://img.shields.io/badge/Made%20with-React%20%2B%20Vite-blue?style=for-the-badge&logo=react)
