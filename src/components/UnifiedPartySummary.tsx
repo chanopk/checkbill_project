@@ -1,131 +1,297 @@
 import { useState } from 'react';
-import type { Member, FoodItem, TaxAndService } from '../types';
+import { SlidersHorizontal } from 'lucide-react';
+import type { Member, FoodItem, TaxAndService, MemberSummary } from '../types';
 import { calculateBillSummary } from '../utils/calculateBill';
-import { Users, X } from 'lucide-react';
 
-interface Props {
-    members: Member[];
-    foodItems: FoodItem[];
-    taxAndService: TaxAndService;
-    onAddMember: (name: string) => void;
-    onRemoveMember: (id: string) => void;
-    onUpdateTaxAndService: (field: keyof TaxAndService, value: number) => void;
+/* ===== SummaryCard ===== */
+
+interface SummaryCardProps {
+  summary: MemberSummary;
+  expanded: boolean;
+  onToggle: () => void;
 }
 
-export function UnifiedPartySummary({
-    members,
-    foodItems,
-    taxAndService,
-    onAddMember,
-    onRemoveMember,
-    onUpdateTaxAndService,
-}: Props) {
-    const [name, setName] = useState('');
+function SummaryCard({ summary, expanded, onToggle }: SummaryCardProps) {
+  const { member, baseTotal, discountAmount, serviceCharge, vat, sponsorAmount, sponsorPool, grandTotal } = summary;
+  const hasDiscount = discountAmount < -0.005;
+  const hasSponsor = sponsorAmount < -0.005;
+  const hasPool = sponsorPool > 0.005;
 
-    const handleAdd = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (name.trim()) {
-            onAddMember(name);
-            setName('');
-        }
-    };
-
-    const summaries = calculateBillSummary(members, foodItems, taxAndService);
-    const grandTotalAll = summaries.reduce((acc, curr) => acc + curr.grandTotal, 0);
-
-    return (
-        <div className="glass-panel">
-            <h2 className="title title-primary">
-                <Users size={24} />
-                ปาร์ตี้และสรุปค่าใช้จ่าย
-            </h2>
-
-            {/* Top: Add Member */}
-            <form onSubmit={handleAdd} className="input-group">
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="ชื่อเพื่อน..."
-                    className="input-base"
-                />
-                <button type="submit" className="btn btn-primary">
-                    เพิ่ม
-                </button>
-            </form>
-
-            {/* Middle: Member List with Individual Total */}
-            <div className="unified-member-list">
-                {members.length > 0 ? (
-                    summaries.map((summary) => (
-                        <div key={summary.member.id} className="unified-member-row animate-fade-in">
-                            <div className="unified-member-name">
-                                {summary.member.name}
-                            </div>
-                            <div className="unified-member-right">
-                                <span className="unified-member-total">
-                                    ฿{summary.grandTotal.toFixed(2)}
-                                </span>
-                                <button
-                                    onClick={() => onRemoveMember(summary.member.id)}
-                                    className="remove-sm"
-                                    title="ลบ"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className="helper-text-italic">ยังไม่มีสมาชิก เพิ่มชื่อด้านบนเลย!</p>
-                )}
-            </div>
-
-            {/* Bottom: Tax Config & Grand Total */}
-            {members.length > 0 && (
-                <div className="unified-bottom-section">
-                    <div className="unified-tax-row">
-                        <div className="flex-1">
-                            <label className="label-text">Service Charge (%)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={taxAndService.serviceChargePercentage}
-                                onChange={(e) =>
-                                    onUpdateTaxAndService('serviceChargePercentage', Number(e.target.value) || 0)
-                                }
-                                className="input-base"
-                            />
-                        </div>
-                        <div className="flex-1">
-                            <label className="label-text">VAT (%)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={taxAndService.vatPercentage}
-                                onChange={(e) =>
-                                    onUpdateTaxAndService('vatPercentage', Number(e.target.value) || 0)
-                                }
-                                className="input-base"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="unified-grand-total">
-                        <div className="flex-between">
-                            <span className="grand-label">ยอดรวมทุกรายการ:</span>
-                            <span className="grand-value">฿{grandTotalAll.toFixed(2)}</span>
-                        </div>
-                        {(taxAndService.serviceChargePercentage > 0 || taxAndService.vatPercentage > 0) && (
-                            <div className="tax-note">
-                                (รวม VAT {taxAndService.vatPercentage}% และ SC {taxAndService.serviceChargePercentage}%)
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+  return (
+    <article className="cb-card" style={{ padding: '16px 18px' }}>
+      <button
+        onClick={onToggle}
+        style={{
+          width: '100%',
+          background: 'transparent',
+          border: 0,
+          padding: 0,
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          gap: 8,
+          textAlign: 'left',
+          fontFamily: 'inherit',
+        }}
+      >
+        <div style={{ fontSize: 'var(--fs-16)', fontWeight: 600, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {member.name}
         </div>
-    );
+        <div style={{ fontSize: 'var(--fs-24)', fontWeight: 700, color: 'var(--mint)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
+          ฿{grandTotal.toFixed(2)}
+        </div>
+      </button>
+
+      {expanded && (
+        <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 'var(--fs-13)', color: 'var(--ink-2)', fontVariantNumeric: 'tabular-nums' }}>
+          <BillRow label="ค่าอาหาร" value={baseTotal} />
+          {hasDiscount && <BillRow label="ส่วนลด" value={discountAmount} tone="mint" />}
+          <BillRow label="Service Charge" value={serviceCharge} />
+          <BillRow label="VAT" value={vat} />
+          {hasSponsor && <BillRow label="สปอนเซอ" value={sponsorAmount} tone="mint" />}
+          {hasPool && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, paddingTop: 4, borderTop: '1px dashed var(--hairline-strong)' }}>
+              <span style={{ color: 'var(--muted)', fontStyle: 'italic' }}>คืนเข้ากองกลาง</span>
+              <span style={{ color: 'var(--warning)' }}>+฿{sponsorPool.toFixed(2)}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </article>
+  );
+}
+
+function BillRow({ label, value, tone }: { label: string; value: number; tone?: 'mint' }) {
+  const color = tone === 'mint' ? 'var(--mint)' : 'var(--ink-2)';
+  const sign = value < 0 ? '−' : '';
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <span style={{ color: 'var(--muted)' }}>{label}</span>
+      <span style={{ color }}>{sign}฿{Math.abs(value).toFixed(2)}</span>
+    </div>
+  );
+}
+
+/* ===== BillAdjustments ===== */
+
+interface AdjustmentsProps {
+  tax: TaxAndService;
+  memberCount: number;
+  onChange: (next: TaxAndService) => void;
+}
+
+function BillAdjustments({ tax, memberCount, onChange }: AdjustmentsProps) {
+  const equalShare = tax.sponsor > 0 && memberCount > 0 ? tax.sponsor / memberCount : 0;
+
+  return (
+    <div className="cb-card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <SlidersHorizontal size={16} style={{ color: 'var(--muted)' }} />
+        <span style={{ fontSize: 'var(--fs-13)', fontWeight: 600, color: 'var(--ink-2)' }}>ภาษีและค่าบริการ</span>
+      </div>
+
+      <div className="cb-tax-grid">
+        <NumberField label="VAT %" value={tax.vatPercentage} onChange={v => onChange({ ...tax, vatPercentage: v })} />
+        <NumberField label="Service %" value={tax.serviceChargePercentage} onChange={v => onChange({ ...tax, serviceChargePercentage: v })} />
+      </div>
+
+      <hr className="cb-divider" />
+
+      <div className="cb-tax-grid">
+        <DiscountField discount={tax.discount} onChange={d => onChange({ ...tax, discount: d })} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <NumberField
+            label="สปอนเซอ (฿)"
+            value={tax.sponsor}
+            onChange={v => onChange({ ...tax, sponsor: v })}
+            placeholder="0"
+            step="1"
+          />
+          {equalShare > 0 && (
+            <span style={{ fontSize: 'var(--fs-11)', color: 'var(--muted)' }}>
+              คนละ ฿{equalShare.toFixed(2)} ({memberCount} คน)
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Sponsor mode toggle */}
+      {tax.sponsor > 0 && memberCount > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', fontWeight: 500 }}>วิธีแบ่งสปอนเซอ</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <SponsorModeBtn
+              selected={tax.sponsorMode === 'proportional'}
+              onClick={() => onChange({ ...tax, sponsorMode: 'proportional' })}
+              label="ตามสัดส่วนยอดของแต่ละคน"
+              description="คนจ่ายเยอะได้รับสปอนเซอมาก"
+            />
+            <SponsorModeBtn
+              selected={tax.sponsorMode === 'equal'}
+              onClick={() => onChange({ ...tax, sponsorMode: 'equal' })}
+              label="แบ่งเท่าๆ กันทุกคน"
+              description={`คนละ ฿${equalShare.toFixed(2)} · ถ้าใครยอดน้อยกว่า ส่วนเกินคืนกองกลางให้คนอื่น`}
+            />
+          </div>
+        </div>
+      )}
+
+      <p style={{ margin: 0, fontSize: 'var(--fs-12)', color: 'var(--muted)' }}>
+        ส่วนลดหักก่อนคิดภาษี · สปอนเซอช่วยจ่ายหลังคิดภาษีแล้ว
+      </p>
+    </div>
+  );
+}
+
+function SponsorModeBtn({
+  selected,
+  onClick,
+  label,
+  description,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  label: string;
+  description: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 10,
+        padding: '10px 12px',
+        borderRadius: 'var(--radius-md)',
+        border: selected ? '1.5px solid var(--coral)' : '1.5px solid var(--hairline)',
+        background: selected ? 'var(--coral-soft)' : 'var(--paper)',
+        cursor: 'pointer',
+        textAlign: 'left',
+        fontFamily: 'inherit',
+        transition: 'all var(--dur-fast) var(--ease)',
+      }}
+    >
+      <span
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: '50%',
+          border: selected ? '5px solid var(--coral)' : '2px solid var(--hairline-strong)',
+          background: 'var(--paper)',
+          flexShrink: 0,
+          marginTop: 2,
+          transition: 'all var(--dur-fast) var(--ease)',
+        }}
+      />
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <span style={{ fontSize: 'var(--fs-13)', fontWeight: 600, color: selected ? 'var(--coral)' : 'var(--ink)' }}>
+          {label}
+        </span>
+        <span style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', lineHeight: 1.4 }}>
+          {description}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function NumberField({
+  label, value, onChange, placeholder, step = '0.1',
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  placeholder?: string;
+  step?: string;
+}) {
+  return (
+    <label style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+      <span style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', fontWeight: 500 }}>{label}</span>
+      <input
+        type="number"
+        inputMode="decimal"
+        value={value === 0 ? '' : value}
+        placeholder={placeholder ?? '0'}
+        step={step}
+        min="0"
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className="cb-number-input"
+      />
+    </label>
+  );
+}
+
+function DiscountField({ discount, onChange }: { discount: TaxAndService['discount']; onChange: (d: TaxAndService['discount']) => void }) {
+  const { type, value } = discount;
+  return (
+    <label style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+      <span style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', fontWeight: 500 }}>ส่วนลด</span>
+      <div className="cb-discount-field">
+        <input
+          type="number"
+          inputMode="decimal"
+          value={value === 0 ? '' : value}
+          placeholder="0"
+          min="0"
+          step={type === 'percent' ? '0.5' : '1'}
+          onChange={e => onChange({ type, value: parseFloat(e.target.value) || 0 })}
+        />
+        <div className="cb-discount-toggle">
+          {(['amount', 'percent'] as const).map(t => (
+            <button key={t} type="button" onClick={() => onChange({ type: t, value })} className={`cb-discount-type-btn${type === t ? ' active' : ''}`}>
+              {t === 'amount' ? '฿' : '%'}
+            </button>
+          ))}
+        </div>
+      </div>
+    </label>
+  );
+}
+
+/* ===== Summary root ===== */
+
+interface Props {
+  members: Member[];
+  foodItems: FoodItem[];
+  taxAndService: TaxAndService;
+  onUpdateTaxAndService: (next: TaxAndService) => void;
+}
+
+export function UnifiedPartySummary({ members, foodItems, taxAndService, onUpdateTaxAndService }: Props) {
+  const summaries = calculateBillSummary(members, foodItems, taxAndService);
+  const grandTotal = summaries.reduce((s, x) => s + x.grandTotal, 0);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const hasAdj = taxAndService.discount.value > 0 || taxAndService.sponsor > 0;
+
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+        <h2 style={{ margin: 0, fontSize: 'var(--fs-18)', fontWeight: 600, color: 'var(--ink)' }}>สรุปยอด</h2>
+        <span style={{ fontSize: 'var(--fs-13)', color: 'var(--muted)' }}>· รวม ฿{grandTotal.toFixed(2)}</span>
+        {hasAdj && <span className="cb-badge-mint">มีส่วนลด/สปอนเซอ</span>}
+      </div>
+
+      {members.length === 0 ? (
+        <div className="cb-empty">ยอดจะปรากฏที่นี่หลังเพิ่มเพื่อนและเมนู</div>
+      ) : (
+        <>
+          <BillAdjustments
+            tax={taxAndService}
+            memberCount={members.length}
+            onChange={onUpdateTaxAndService}
+          />
+          {summaries.map(s => (
+            <SummaryCard
+              key={s.member.id}
+              summary={s}
+              expanded={expandedId === s.member.id}
+              onToggle={() => setExpandedId(id => id === s.member.id ? null : s.member.id)}
+            />
+          ))}
+        </>
+      )}
+    </section>
+  );
 }

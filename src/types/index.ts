@@ -1,32 +1,36 @@
-// src/types/index.ts
-
 export interface Member {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
 export interface FoodItem {
-    id: string;
-    name: string;
-    price: number;
-    sharedBy: string[]; // Array of Member IDs who share this item
+  id: string;
+  name: string;
+  price: number;
+  sharedBy: string[];
+}
+
+export interface Discount {
+  type: 'amount' | 'percent';
+  value: number;
 }
 
 export interface TaxAndService {
-    vatPercentage: number;
-    serviceChargePercentage: number;
-}
-
-export interface BillState {
-    members: Member[];
-    foodItems: FoodItem[];
-    taxAndService: TaxAndService;
+  vatPercentage: number;
+  serviceChargePercentage: number;
+  discount: Discount;
+  sponsor: number;
+  sponsorMode: 'proportional' | 'equal';
 }
 
 export interface MemberSummary {
-    member: Member;
-    baseTotal: number;
-    serviceCharge: number;
-    vat: number;
-    grandTotal: number;
+  member: Member;
+  baseTotal: number;
+  discountAmount: number;
+  discountedBase: number;
+  serviceCharge: number;
+  vat: number;
+  sponsorAmount: number;  // negative: sponsor paid for this person
+  sponsorPool: number;    // positive: amount returned to common pool (equal mode)
+  grandTotal: number;
 }
