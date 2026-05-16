@@ -414,3 +414,59 @@ input, textarea, select { font-family: inherit; }
   color: var(--muted);
   font-size: var(--fs-12);
 }
+
+/* ===== Sticky total bar (mobile only) ===== */
+.cb-sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--paper);
+  border-top: 1px solid var(--hairline);
+  box-shadow: 0 -4px 16px rgba(31, 27, 22, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  cursor: pointer;
+  z-index: 20;
+  transition: background var(--dur-fast) var(--ease);
+}
+.cb-sticky-bar:hover { background: var(--paper-2); }
+.cb-sticky-bar:active { background: var(--coral-soft); }
+
+@media (min-width: 720px) {
+  .cb-sticky-bar { display: none; }
+}
+
+/* ===== PromptPay QR ===== */
+.cb-promptpay-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cb-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--paper-2);
+  border-radius: var(--radius-md);
+  margin-top: 12px;
+}
+
+.cb-qr-amount {
+  font-size: var(--fs-18);
+  font-weight: 700;
+  color: var(--mint);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.cb-qr-label {
+  font-size: var(--fs-12);
+  color: var(--muted);
+  text-align: center;
+}
