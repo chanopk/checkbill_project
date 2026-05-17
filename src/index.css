@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
-/* ===== Design Tokens ===== */
+/* ===== Design Tokens — Light (default) ===== */
 :root {
   --coral:           #F26B4E;
   --coral-hover:     #DD5A3F;
@@ -51,6 +51,27 @@
 
   --container-max: 960px;
   --header-h:      56px;
+}
+
+/* ===== Design Tokens — Dark ===== */
+html[data-theme="dark"] {
+  --cream:           #0d1117;
+  --paper:           #161b22;
+  --paper-2:         #21262d;
+
+  --ink:             #e6edf3;
+  --ink-2:           #8b949e;
+  --muted:           #6e7681;
+  --hairline:        #30363d;
+  --hairline-strong: #484f58;
+
+  --coral-soft:      rgba(242, 107, 78, 0.15);
+  --coral-ring:      rgba(242, 107, 78, 0.30);
+  --mint-soft:       rgba(63, 185, 80, 0.15);
+  --danger-soft:     rgba(209, 67, 67, 0.18);
+  --warning-soft:    rgba(216, 154, 31, 0.15);
+
+  --shadow-card:     0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 /* ===== Reset ===== */
