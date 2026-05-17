@@ -16,15 +16,9 @@ function FoodRow({ item, members, onToggleShare, onSelectAll, onRemove }: FoodRo
   const empty = sharedCount === 0;
 
   return (
-    <article className="cb-card" style={{ padding: '16px 18px', position: 'relative' }}>
-      {empty && (
-        <span className="cb-badge-warning" style={{ position: 'absolute', top: 12, right: 12 }}>
-          ยังไม่มีคนเลือก
-        </span>
-      )}
-
+    <article className="cb-card" style={{ padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <div
             style={{
               fontSize: 'var(--fs-16)',
@@ -37,11 +31,15 @@ function FoodRow({ item, members, onToggleShare, onSelectAll, onRemove }: FoodRo
           >
             {item.name}
           </div>
-          {!empty && (
-            <div style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>
-              ฿{perPerson.toFixed(2)} / คน · แบ่ง {sharedCount} คน
-            </div>
-          )}
+          <div style={{ marginTop: 3, minHeight: 18 }}>
+            {empty ? (
+              <span className="cb-badge-warning">ยังไม่มีคนเลือก</span>
+            ) : (
+              <span style={{ fontSize: 'var(--fs-12)', color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
+                ฿{perPerson.toFixed(2)} / คน · แบ่ง {sharedCount} คน
+              </span>
+            )}
+          </div>
         </div>
         <div
           style={{
