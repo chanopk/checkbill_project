@@ -127,7 +127,6 @@ input, textarea, select { font-family: inherit; }
 
 @media (max-width: 480px) {
   .cb-header-inner { gap: 6px; }
-  .cb-header-share { display: none; }
 }
 
 /* ===== Main grid layout ===== */

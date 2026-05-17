@@ -1,9 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { Member, FoodItem, TaxAndService } from '../types';
 
+function loadLS<T>(key: string, fallback: T): T {
+  try { return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; } catch { return fallback; }
+}
+
 export function useBillState() {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
+  const [members, setMembers] = useState<Member[]>(() => loadLS('cb-members', []));
+  const [foodItems, setFoodItems] = useState<FoodItem[]>(() => loadLS('cb-foodItems', []));
+
+  useEffect(() => { localStorage.setItem('cb-members', JSON.stringify(members)); }, [members]);
+  useEffect(() => { localStorage.setItem('cb-foodItems', JSON.stringify(foodItems)); }, [foodItems]);
   const [taxAndService, setTaxAndService] = useState<TaxAndService>({
     vatPercentage: 7,
     serviceChargePercentage: 10,

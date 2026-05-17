@@ -1,4 +1,4 @@
-import { ReceiptText, Sun, Moon, Share2, Copy, Check } from 'lucide-react';
+import { ReceiptText, Sun, Moon, Share2, Check } from 'lucide-react';
 
 interface Props {
   dark: boolean;
@@ -30,36 +30,22 @@ export function Header({ dark, onToggleDark, onShare, shareLabel = 'แชร์
           {dark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
-        <span className="cb-header-share">
-          <button
-            className="cb-btn cb-btn-secondary cb-btn-sm"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              color: copied ? 'var(--mint)' : undefined,
-              borderColor: copied ? 'var(--mint)' : undefined,
-              transition: 'color 0.15s, border-color 0.15s',
-            }}
-            onClick={onShare}
-            aria-label="แชร์สรุปบิล"
-          >
-            {copied ? <Check size={14} /> : <Share2 size={14} />}
-            {shareLabel}
-          </button>
-        </span>
-
-        {/* Mobile share icon (no text label) */}
-        <span className="cb-header-share-mobile">
-          <button
-            className="cb-iconbtn"
-            onClick={onShare}
-            aria-label="แชร์สรุปบิล"
-            style={{ color: copied ? 'var(--mint)' : undefined }}
-          >
-            {copied ? <Copy size={18} /> : <Share2 size={18} />}
-          </button>
-        </span>
+        <button
+          className="cb-btn cb-btn-secondary cb-btn-sm"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            color: copied ? 'var(--mint)' : undefined,
+            borderColor: copied ? 'var(--mint)' : undefined,
+            transition: 'color 0.15s, border-color 0.15s',
+          }}
+          onClick={onShare}
+          aria-label="แชร์สรุปบิล"
+        >
+          {copied ? <Check size={14} /> : <Share2 size={14} />}
+          {shareLabel}
+        </button>
       </div>
     </header>
   );

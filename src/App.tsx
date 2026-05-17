@@ -8,7 +8,10 @@ import { calculateBillSummary } from './utils/calculateBill';
 import './index.css';
 
 function App() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState<boolean>(() => {
+    const saved = localStorage.getItem('cb-theme');
+    return saved !== null ? saved === 'dark' : true; // dark by default
+  });
   const [promptPayId, setPromptPayId] = useState('');
   const [shareLabel, setShareLabel] = useState('แชร์');
   const {
@@ -24,9 +27,9 @@ function App() {
     updateTaxAndService,
   } = useBillState();
 
-  // Apply dark mode to <html> so body + all CSS vars update correctly
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('cb-theme', dark ? 'dark' : 'light');
   }, [dark]);
 
   const summaries = calculateBillSummary(members, foodItems, taxAndService);
